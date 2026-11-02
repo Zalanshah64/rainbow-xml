@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--
+  08  HTML                     settings: "rainbowXml.languages": ["xml", "html"]
+
+  Before adding "html": nothing in this file is colored.
+
+  After adding it, check:
+  - Void elements (<meta>, <link>, <img>, <br>, <hr>, <input>, ...) need no
+    closing tag: they are colored like children and the tags after them
+    keep the right depth. <br/> written XML-style works too.
+  - Tag names ignore case: <DIV> ... </div> is a pair (try the cursor on it).
+  - Nothing inside <script> or <style> is colored, even "<div>" strings
+    and "a<b" comparisons.
+  - Unquoted and boolean attributes (href=/home, disabled) are colored.
+  - The marked mistakes near the bottom are UNDERLINED.
+
+  Known limitation: HTML lets you leave out some closing tags, like
+  </li> and </p>. This extension doesn't know those rules, so the <li>
+  items in the last list are UNDERLINED as never closed.
+
+  Compare: switch the language mode to XML (bottom-right of the window).
+  Void elements are now treated as unclosed, and the script's "<b" shows up.
+-->
+<HTML lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rainbow XML HTML sample</title>
+  <link rel="stylesheet" href="style.css">
+  <base href="/">
+  <style>
+    a < b { color: red }   /* not a tag */
+    div > p { margin: 0 }
+  </style>
+</head>
+<body>
+  <DIV class="card">
+    <img src="a.png" alt="x"><br><br/><hr>
+    <p>Void elements need no closing tag.</P>
+    <Span>Mixed case: Span and span are a pair.</span>
+  </div>
+
+  <form action=/submit method=post>
+    <label for="q">Search</label>
+    <input id="q" name="q" required>
+    <input type="checkbox" checked disabled>
+    <select><option>One</option><option>Two</option></select>
+    <textarea rows="3"></textarea>
+    <button type="submit">Go</button>
+  </form>
+
+  <table>
+    <colgroup><col><col span="2"></colgroup>
+    <tr><td>cell</td><td>cell<wbr>break</td></tr>
+  </table>
+
+  <video controls>
+    <source src="movie.mp4" type="video/mp4">
+    <track kind="captions" src="captions.vtt">
+  </video>
+
+  <script>
+    if (a<b && c>d) { document.body.innerHTML = "<div><span>"; }
+    const html = '</div></body>';
+  </script>
+  <script type="module" src="app.js"></script>
+  <SCRIPT>
+    // uppercase script tags work too: <fake>
+  </script >
+
+  <section>
+    <!-- Never closed: <span> is UNDERLINED. -->
+    <span>This span is never closed
+  </section>
+  <!-- No opening tag: </aside> is UNDERLINED. -->
+  </aside>
+
+  <!-- Known limitation: these <li> tags are UNDERLINED, though browsers accept them. -->
+  <ul>
+    <li>One
+    <li>Two
+  </ul>
+</body>
+</html>

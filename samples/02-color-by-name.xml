@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  02  COLOR BY NAME                  settings: "rainbowXml.colorBy": "name"
+
+  Check:
+  - Every <item> is the same color, whether it sits at depth 2 or depth 6.
+    The same goes for <name>, <price>, and <note>.
+  - Different names usually get different colors (with 10 colors some
+    names will share one, which is expected).
+  - soap:Body and Body are different names, so they can differ in color.
+    XML names are case-sensitive, so Item and item can differ too.
+  - Open 06-unmatched-tags.xml: its <item> and <name> tags have the same
+    colors as here. Colors stay the same across files and restarts.
+  - Switch back to "depth": the colors change to follow nesting again.
+-->
+<catalog>
+  <item>
+    <name>Top-level item</name>
+    <price>1.00</price>
+  </item>
+  <section>
+    <group>
+      <item>
+        <name>Nested item</name>
+        <price>2.00</price>
+        <parts>
+          <part>
+            <item>
+              <name>Deeply nested item</name>
+              <price>3.00</price>
+              <note>All three items, names, and prices match.</note>
+            </item>
+          </part>
+        </parts>
+      </item>
+    </group>
+    <note>Same color as the note above.</note>
+  </section>
+
+  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+      <Body>Prefix is part of the name: soap:Body and Body are separate names.</Body>
+    </soap:Body>
+  </soap:Envelope>
+
+  <Item>Capital I: a different name from item.</Item>
+  <item>Lowercase: same color as the other items.</item>
+
+  <!-- Similar names still spread across the palette. -->
+  <item1/><item2/><item3/><item4/><item5/><item6/><item7/><item8/><item9/>
+</catalog>

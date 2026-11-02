@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  07  OVERRIDES
+
+  Settings:
+    "rainbowXml.overrides": {
+      "error": "#ff0000",
+      "soap:Fault": "#ff00ff"
+    }
+
+  Check:
+  - Every <error> is bright red at every depth, in both "depth" and
+    "name" mode. Its attribute names (and brackets, if colorBrackets is
+    on) are red too.
+  - <soap:Fault> is magenta. An override needs the full name with prefix,
+    so a plain <Fault> keeps its normal color.
+  - Names are case-sensitive: <Error> and <ERROR> are not overridden.
+  - Everything else keeps its normal rainbow color.
+-->
+<log>
+  <error code="1">top-level error</error>
+  <entry>
+    <error code="2">nested error</error>
+    <details>
+      <error code="3">deeply nested error</error>
+    </details>
+  </entry>
+  <Error>capital E: not overridden</Error>
+  <ERROR>all caps: not overridden</ERROR>
+
+  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+      <soap:Fault>
+        <Fault>no prefix: not overridden</Fault>
+      </soap:Fault>
+    </soap:Body>
+  </soap:Envelope>
+</log>

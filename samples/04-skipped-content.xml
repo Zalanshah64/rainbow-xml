@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="style.xsl"?>
+<!DOCTYPE library [
+  <!ELEMENT library ANY>
+  <!ELEMENT book ANY>
+  <!ELEMENT check ANY>
+  <!ELEMENT script ANY>
+  <!ELEMENT code ANY>
+  <!ELEMENT text ANY>
+  <!ENTITY publisher "Rainbow Press">
+]>
+<!--
+  04  SKIPPED CONTENT                               settings: defaults
+
+  Nothing that looks like a tag inside a comment, CDATA section,
+  <?...?> instruction, or <!...> declaration should be colored, and
+  none of it should change the nesting.
+
+  Check:
+  - Every <check> tag below is yellow (the third level). If anything inside the
+    skipped content were counted as a tag, the colors would shift.
+  - The DOCTYPE and <?xml-stylesheet?> lines above are not colored.
+  - Escaped text like &lt;fake&gt; is not colored.
+-->
+<library>
+  <book>
+    <check>after the prolog</check>
+
+    <!-- <fake> single-line comment </fake> -->
+    <check>after a one-line comment</check>
+
+    <!--
+      <fake>
+        <deeper>
+          A multi-line comment with unclosed tags inside.
+          </deeper>
+      </fake>
+    -->
+    <check>after a multi-line comment</check>
+
+    <script><![CDATA[ if (a < b && c > d) { open("<fake>"); } ]]></script>
+    <check>after one-line CDATA</check>
+
+    <code><![CDATA[
+      <fake attr="1">
+        <deeper/>
+      </nope>
+    ]]></code>
+    <check>after multi-line CDATA</check>
+
+    <?processing-instruction <fake> ?>
+    <check>after a processing instruction</check>
+
+    <text>Escaped: &lt;fake&gt; &amp; &publisher;.</text>
+    <check>after escaped text</check>
+  </book>
+</library>

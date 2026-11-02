@@ -1,0 +1,35 @@
+// Settings for the samples folder, which F5 opens in the Extension Development Host.
+// Everything is commented out, so the defaults apply. Uncomment a line to try it;
+// the change shows up right away, no reload needed. See samples/README.md.
+{
+    // --- Coloring ---
+    // "rainbowXml.enabled": false,
+    // "rainbowXml.colorBy": "name",                       // 02-color-by-name.xml
+    // "rainbowXml.colorAttributes": false,                // 03-attributes-and-brackets.xml
+    // "rainbowXml.colorBrackets": true,                   // 03-attributes-and-brackets.xml
+    // "rainbowXml.overrides": {                           // 07-overrides.xml
+    //     "error": "#ff0000",
+    //     "soap:Fault": "#ff00ff"
+    // },
+
+    // --- Matching and unmatched tags ---
+    // "rainbowXml.highlightMatchingTag": false,           // 05-matching-tags.xml
+    // "rainbowXml.markUnmatchedTags": false,              // 06-unmatched-tags.xml
+
+    // --- Languages ---
+    // "rainbowXml.languages": ["xml", "html", "xsl"],     // 08-html.html, 09-languages.xsl
+
+    // --- Palette: a custom list replaces the theme colors in every theme ---
+    // "rainbowXml.palette": ["#e06c75", "#d19a66", "#e5c07b", "#98c379", "#56b6c2", "#61afef", "#c678dd"],
+
+    // --- Theme colors: change single colors, for every theme or just one ---
+    // "workbench.colorCustomizations": {
+    //     "rainbowXml.color1": "#00ffff",                 // root elements turn cyan
+    //     "rainbowXml.matchingTagBackground": "#ffff0044",
+    //     "rainbowXml.matchingTagBorder": "#ffff00",
+    //     "rainbowXml.unmatchedTag": "#ff00ff",
+    //     "[Default Light Modern]": {
+    //         "rainbowXml.color2": "#000000"              // children of the root turn black, in this theme only
+    //     }
+    // },
+}

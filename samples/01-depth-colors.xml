@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  01  DEPTH COLORS                                  settings: defaults
+
+  Check:
+  - Each tag below is named after the color it should be. The root is red,
+    its children orange, then yellow, lime, green, teal, sky, indigo,
+    violet, pink, and level 11 wraps back around to red.
+  - Every closing tag is the same color as its opening tag.
+  - Siblings share a color even when their names are different.
+  - Self-closing tags are colored by their depth like any other child.
+  - Tags inside this comment, like <red> and </pink>, are not colored.
+-->
+<red-1>
+  <orange-2>
+    <yellow-3>
+      <lime-4>
+        <green-5>
+          <teal-6>
+            <sky-7>
+              <indigo-8>
+                <violet-9>
+                  <pink-10>
+                    <red-11>Level 11 wraps back to red.</red-11>
+                    <red-11-self-closing/>
+                    <red-11-too>
+                      <orange-12/>
+                    </red-11-too>
+                  </pink-10>
+                </violet-9>
+              </indigo-8>
+            </sky-7>
+          </teal-6>
+        </green-5>
+      </lime-4>
+    </yellow-3>
+  </orange-2>
+
+  <!-- Siblings: three different names at the same depth, all orange. -->
+  <orange-customer>
+    <yellow-name>Ada Lovelace</yellow-name>
+    <yellow-email>ada@example.com</yellow-email>
+    <yellow-address
+      street="12 Analytical Way"
+      city="London"
+    />
+  </orange-customer>
+  <orange-order id="1001">
+    <yellow-item sku="A-1"/><yellow-item sku="B-7"/><yellow-total>44.48</yellow-total>
+  </orange-order>
+  <orange-empty></orange-empty>
+
+  <!-- A tag split across lines is still one tag. -->
+  <orange-split
+  ><yellow-inside/></orange-split
+  >
+</red-1>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  12  EDGE CASES                                    settings: defaults
+
+  Check:
+  - Names with accents, other scripts, dots, hyphens, and underscores are
+    colored (all orange, under the red root).
+  - Things that only look like tags are not colored: "< spaced>", "<1bad>",
+    "<>", and "<-dash>".
+  - A closing tag with a space before ">" (</item >) still pairs up.
+  - Many tags on one line are colored and pair up correctly.
+  - The <unfinished tag at the very end has no ">". It is still colored,
+    and it's UNDERLINED as never closed.
+  - Empty the whole file (Ctrl+A, Delete) and undo: no errors, colors return.
+-->
+<edge-cases>
+  <café>accented</café>
+  <日本語>other scripts</日本語>
+  <ελληνικά>Greek</ελληνικά>
+  <_private>leading underscore</_private>
+  <a.b-c_d>dots, hyphens, and underscores</a.b-c_d>
+  <x123>digits after the first letter</x123>
+
+  <text>Not tags: < spaced> <1bad> <> <-dash></text>
+
+  <item >space before the bracket</item >
+
+  <row><a>1</a><b>2</b><c>3</c><d>4</d><e>5</e><f>6</f><g>7</g><h>8</h></row>
+  <deep><x><x><x><x><x><x><x><x><x><x><x><x/></x></x></x></x></x></x></x></x></x></x></x></deep>
+</edge-cases>
+<unfinished

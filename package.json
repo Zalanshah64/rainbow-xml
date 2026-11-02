@@ -1,7 +1,7 @@
 {
     "name": "rainbow-xml",
     "displayName": "Rainbow XML",
-    "description": "Colors XML tags in rainbow order by nesting depth, so each child is the next color after its parent.",
+    "description": "Colors XML tags in rainbow order by nesting depth (or by tag name), highlights matching tags, and marks unmatched ones.",
     "version": "0.0.1",
     "publisher": "d214deb9-50a7-663a-a0b8-821bf74db6ea",
     "engines": {
@@ -39,6 +39,19 @@
                     "default": true,
                     "description": "Turns tag coloring on or off."
                 },
+                "rainbowXml.colorBy": {
+                    "type": "string",
+                    "enum": [
+                        "depth",
+                        "name"
+                    ],
+                    "enumDescriptions": [
+                        "Root elements get the first color, their children the second, and so on.",
+                        "Each tag name always gets the same color, in every file."
+                    ],
+                    "default": "depth",
+                    "markdownDescription": "How tags pick a color: by how deeply they are nested, or by their name."
+                },
                 "rainbowXml.palette": {
                     "type": "array",
                     "default": [],
@@ -46,7 +59,7 @@
                         "type": "string",
                         "pattern": "^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
                     },
-                    "markdownDescription": "A custom list of hex colors (for example `#ff6b6b`) to use instead of the built-in palette. The root element uses the first color, its children the second, and so on. Leave empty to use the built-in 10 colors, which have separate light and dark theme variants."
+                    "markdownDescription": "A custom list of hex colors (for example `#ff6b6b`) to use instead of the built-in palette, in the same color for every theme. Leave empty to use the built-in 10 colors, which have light, dark, and high contrast variants and can be changed per theme with `rainbowXml.color1` through `rainbowXml.color10` in `#workbench.colorCustomizations#`."
                 },
                 "rainbowXml.colorBrackets": {
                     "type": "boolean",
@@ -57,6 +70,16 @@
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "Also colors attribute names (like `id` in `<order id=\"1\">`) to match their tag. Attribute values keep their normal color."
+                },
+                "rainbowXml.highlightMatchingTag": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "When the cursor is on a tag name, highlights that tag and its matching opening or closing tag."
+                },
+                "rainbowXml.markUnmatchedTags": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Puts a wavy underline on opening tags that are never closed and closing tags with nothing to close."
                 },
                 "rainbowXml.overrides": {
                     "type": "object",
@@ -75,10 +98,142 @@
                     "items": {
                         "type": "string"
                     },
-                    "description": "Language modes to color (for example xml, xaml, svg, xsl)."
+                    "markdownDescription": "Language modes to color (for example `xml`, `xaml`, `svg`, `xsl`, `html`). In `html`, void elements like `<br>` and `<img>` need no closing tag, tag names ignore case, and the contents of `<script>` and `<style>` are skipped."
                 }
             }
-        }
+        },
+        "colors": [
+            {
+                "id": "rainbowXml.color1",
+                "description": "Rainbow XML palette color 1 (red). When coloring by depth, used for nesting level 1 (root elements).",
+                "defaults": {
+                    "dark": "#ff6b6b",
+                    "light": "#c92a2a",
+                    "highContrast": "#ff6b6b",
+                    "highContrastLight": "#c92a2a"
+                }
+            },
+            {
+                "id": "rainbowXml.color2",
+                "description": "Rainbow XML palette color 2 (orange). When coloring by depth, used for nesting level 2.",
+                "defaults": {
+                    "dark": "#ffa94d",
+                    "light": "#d9480f",
+                    "highContrast": "#ffa94d",
+                    "highContrastLight": "#d9480f"
+                }
+            },
+            {
+                "id": "rainbowXml.color3",
+                "description": "Rainbow XML palette color 3 (yellow). When coloring by depth, used for nesting level 3.",
+                "defaults": {
+                    "dark": "#ffd43b",
+                    "light": "#a86400",
+                    "highContrast": "#ffd43b",
+                    "highContrastLight": "#a86400"
+                }
+            },
+            {
+                "id": "rainbowXml.color4",
+                "description": "Rainbow XML palette color 4 (lime). When coloring by depth, used for nesting level 4.",
+                "defaults": {
+                    "dark": "#a9e34b",
+                    "light": "#4f7f0a",
+                    "highContrast": "#a9e34b",
+                    "highContrastLight": "#4f7f0a"
+                }
+            },
+            {
+                "id": "rainbowXml.color5",
+                "description": "Rainbow XML palette color 5 (green). When coloring by depth, used for nesting level 5.",
+                "defaults": {
+                    "dark": "#51cf66",
+                    "light": "#2b8a3e",
+                    "highContrast": "#51cf66",
+                    "highContrastLight": "#2b8a3e"
+                }
+            },
+            {
+                "id": "rainbowXml.color6",
+                "description": "Rainbow XML palette color 6 (teal). When coloring by depth, used for nesting level 6.",
+                "defaults": {
+                    "dark": "#38d9a9",
+                    "light": "#087f5b",
+                    "highContrast": "#38d9a9",
+                    "highContrastLight": "#087f5b"
+                }
+            },
+            {
+                "id": "rainbowXml.color7",
+                "description": "Rainbow XML palette color 7 (sky). When coloring by depth, used for nesting level 7.",
+                "defaults": {
+                    "dark": "#4dabf7",
+                    "light": "#1971c2",
+                    "highContrast": "#4dabf7",
+                    "highContrastLight": "#1971c2"
+                }
+            },
+            {
+                "id": "rainbowXml.color8",
+                "description": "Rainbow XML palette color 8 (indigo). When coloring by depth, used for nesting level 8.",
+                "defaults": {
+                    "dark": "#748ffc",
+                    "light": "#3b5bdb",
+                    "highContrast": "#748ffc",
+                    "highContrastLight": "#3b5bdb"
+                }
+            },
+            {
+                "id": "rainbowXml.color9",
+                "description": "Rainbow XML palette color 9 (violet). When coloring by depth, used for nesting level 9.",
+                "defaults": {
+                    "dark": "#b197fc",
+                    "light": "#7048e8",
+                    "highContrast": "#b197fc",
+                    "highContrastLight": "#7048e8"
+                }
+            },
+            {
+                "id": "rainbowXml.color10",
+                "description": "Rainbow XML palette color 10 (pink). When coloring by depth, used for nesting level 10.",
+                "defaults": {
+                    "dark": "#f783ac",
+                    "light": "#c2255c",
+                    "highContrast": "#f783ac",
+                    "highContrastLight": "#c2255c"
+                }
+            },
+            {
+                "id": "rainbowXml.matchingTagBackground",
+                "description": "Background of the tag under the cursor and its matching tag.",
+                "defaults": {
+                    "dark": "editorBracketMatch.background",
+                    "light": "editorBracketMatch.background",
+                    "highContrast": "editorBracketMatch.background",
+                    "highContrastLight": "editorBracketMatch.background"
+                }
+            },
+            {
+                "id": "rainbowXml.matchingTagBorder",
+                "description": "Border around the tag under the cursor and its matching tag.",
+                "defaults": {
+                    "dark": "editorBracketMatch.border",
+                    "light": "editorBracketMatch.border",
+                    "highContrast": "editorBracketMatch.border",
+                    "highContrastLight": "editorBracketMatch.border"
+                }
+            },
+            {
+                "id": "rainbowXml.unmatchedTag",
+                "description": "Wavy underline and scrollbar mark for tags with no matching opening or closing tag.",
+                "defaults": {
+                    "dark": "editorWarning.foreground",
+                    "light": "editorWarning.foreground",
+                    "highContrast": "editorWarning.foreground",
+                    "highContrastLight": "editorWarning.foreground"
+                }
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

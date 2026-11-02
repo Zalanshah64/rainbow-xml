@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  05  MATCHING TAGS                                 settings: defaults
+
+  Put the cursor on a tag's name (or on its "<") and both that tag and
+  its partner get a box. Each case below says what should happen.
+  For a pair hundreds of lines apart, see 10-checkpoints.xml.
+
+  Then set "rainbowXml.highlightMatchingTag": false
+  - No boxes appear anywhere.
+-->
+<cases>
+  <!-- A. Simple pair: cursor on either "case-a" highlights both. -->
+  <case-a>text</case-a>
+
+  <!-- B. Same name nested: cursor on the OUTER <group> highlights the
+          LAST </group>, and the inner one highlights the inner close. -->
+  <group id="outer">
+    <group id="inner">
+      <group id="innermost"/>
+    </group>
+  </group>
+
+  <!-- C. Opening tag over several lines: cursor on "case-c" (line 1 of
+          the tag) highlights </case-c>. -->
+  <case-c
+    first="1"
+    second="2"
+  >
+    <child/>
+  </case-c>
+
+  <!-- D. Cursor on the closing tag's name highlights the opening tag. -->
+  <case-d>
+    <child/>
+  </case-d>
+
+  <!-- E. Self-closing tag: nothing is highlighted. -->
+  <case-e/>
+
+  <!-- F. Cursor on an attribute, a value, the ">" or the text: nothing
+          is highlighted. Only "<" through the end of the name counts. -->
+  <case-f attr="value">text inside</case-f>
+
+  <!-- G. Multiple cursors: Alt+Click on "g1", "g2", and "g3" — all three
+          pairs are highlighted at once. -->
+  <g1><g2><g3></g3></g2></g1>
+
+  <!-- H. Unclosed tag: cursor on <case-h-missing> highlights nothing
+          (it also has a wavy underline). Cursor on <case-h> still finds
+          </case-h> even though a child inside it was never closed. -->
+  <case-h>
+    <case-h-missing>
+  </case-h>
+
+  <!-- I. Stray closing tag: cursor on </case-i-stray> highlights nothing. -->
+  </case-i-stray>
+
+  <!-- J. Edit and check: rename the "case-j" in the closing tag to "case-x".
+          Now both tags are unmatched and nothing highlights. Undo to fix. -->
+  <case-j>
+    <child/>
+  </case-j>
+</cases>

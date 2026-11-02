@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  03  ATTRIBUTES AND BRACKETS
+
+  With the defaults ("rainbowXml.colorAttributes": true):
+  - Attribute names are the same color as their tag. Values keep their
+    normal syntax color.
+  - Words inside values are not colored: in note="id=5 status" only
+    "note" is colored, not "id" or "status".
+  - A ">" or "/" inside a quoted value does not end the tag.
+
+  Then set "rainbowXml.colorAttributes": false
+  - Only tag names are colored; attribute names go back to normal.
+
+  Then set "rainbowXml.colorBrackets": true
+  - The "<", "</", ">", and "/>" around each tag take the tag's color too,
+    including a ">" that sits on its own line.
+-->
+<orders xmlns="urn:orders" xmlns:ext="urn:ext" xml:lang="en">
+  <order id="1001" status="shipped" ext:priority="high">
+    <note text="id=5 status=open" author='single quotes'/>
+    <rule expr="price > 10 and qty < 5" path="/usr/local/bin"/>
+    <empty value="" data-id="7" my.attr="dots" under_score="ok"/>
+    <tight a="1"b="2"/>
+    <spaced   first = "1"   second =  '2'   />
+  </order>
+
+  <order
+    id="1002"
+    status="pending"
+    ext:priority="low"
+  >
+    <address
+      street="12 Analytical Way"
+      city="London"
+      country="UK"
+    />
+  </order>
+
+  <!-- Close and self-close markers: watch these with colorBrackets on. -->
+  <a><b/><c></c></a>
+  <a
+  ><b
+  /></a
+  >
+</orders>

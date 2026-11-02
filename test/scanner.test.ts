@@ -104,3 +104,23 @@ test('skips lines over the length limit', () => {
 test('ignores text that only looks like a tag', () => {
   assert.deepEqual(names(['a < b', '<1bad>', '< spaced>']), []);
 });
+
+test('html mode treats void elements as self-closing', () => {
+  const kinds = (html: boolean) => scan(['<p><br><IMG src="a.png"><hr/></p>'], { html }).tags.map((t) => t.kind);
+  assert.deepEqual(kinds(true), ['open', 'selfClosing', 'selfClosing', 'selfClosing', 'close']);
+  assert.deepEqual(kinds(false), ['open', 'open', 'open', 'selfClosing', 'close']);
+});
+
+test('html mode skips script and style contents', () => {
+  const lines = ['<script type="x">', 'if (a<b && c>d) { x = "<div>"; }', '</SCRIPT><style>a<b{}</style><p/>'];
+  assert.deepEqual(
+    scan(lines, { html: true }).tags.map((t) => t.name),
+    ['script', 'SCRIPT', 'style', 'style', 'p'],
+  );
+  assert.ok(scan(lines).tags.some((t) => t.name === 'b')); // XML rules don't skip it
+});
+
+test('html mode never reports a safe line inside a script', () => {
+  const lines = ['<script>', 'a<b', 'c<d', '</script>', '<p/>'];
+  assert.deepEqual(scan(lines, { html: true, safeLineEvery: 1 }).safeLines.map((s) => s.line), [3, 4]);
+});

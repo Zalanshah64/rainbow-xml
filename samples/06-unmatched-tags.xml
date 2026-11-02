@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  06  UNMATCHED TAGS                                settings: defaults
+
+  Check:
+  - Each tag marked "UNDERLINED" below has a wavy underline in your
+    theme's warning color and a mark on the scrollbar at the right.
+  - Hovering it shows "<name> is never closed" or "</name> has no
+    opening tag".
+  - Tags marked "fine" have no underline.
+  - Colors recover after each mistake: every <item> in this file is yellow.
+  - Fix a mistake by hand (for example rename </nmae> to </name>): the
+    underlines go away right after you type.
+
+  Then set "rainbowXml.markUnmatchedTags": false
+  - No underlines or scrollbar marks; colors and matching still work.
+-->
+<store>
+  <items>
+    <!-- Typo in the closing tag: <name> is UNDERLINED (never closed)
+         and </nmae> is UNDERLINED (no opening tag). -->
+    <item>
+      <name>Gears</nmae>
+    </item>
+
+    <!-- Forgotten closing tag: <price> is UNDERLINED. </item> closes it,
+         so the next item is still yellow. -->
+    <item>
+      <price>19.99
+    </item>
+
+    <!-- Wrong order: <b> is UNDERLINED (closed early by </i>), and </b>
+         is UNDERLINED (nothing left to close). -->
+    <item>
+      <i><b>bold italic</i></b>
+    </item>
+
+    <!-- Closing tag with no opening tag at all: </extra> is UNDERLINED. -->
+    <item>fine</item>
+    </extra>
+
+    <!-- Tags inside comments never count, so this </items> is fine. -->
+    <item>fine</item>
+  </items>
+</store>
+
+<!-- Opened but never closed before the end of the file: <trailing>
+     is UNDERLINED. -->
+<trailing>
+  <child>fine</child>

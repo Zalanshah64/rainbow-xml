@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  09a  LANGUAGES: SVG                               settings: defaults
+
+  VS Code opens .svg files in XML mode, so this file is colored with the
+  default "rainbowXml.languages": ["xml"]. Check the language mode in the
+  bottom-right of the window: it should say XML.
+
+  Compare with 09-languages.xsl, which is not colored until you add "xsl".
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="120" viewBox="0 0 200 120">
+  <defs>
+    <linearGradient id="rainbow" x1="0" x2="1">
+      <stop offset="0" stop-color="#ff6b6b"/>
+      <stop offset="0.5" stop-color="#51cf66"/>
+      <stop offset="1" stop-color="#748ffc"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#rainbow)" stroke="#333">
+    <rect x="10" y="10" width="180" height="40" rx="8"/>
+    <circle cx="50" cy="85" r="25"/>
+    <use xlink:href="#rainbow"/>
+    <text x="100" y="90">
+      <tspan font-weight="bold">Rainbow</tspan> XML
+    </text>
+  </g>
+</svg>

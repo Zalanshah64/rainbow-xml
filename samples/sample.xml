@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Small sample for trying Rainbow XML. Every tag name should keep one color. -->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Header>
+    <auth token="abc123"/>
+  </soap:Header>
+  <soap:Body>
+    <orders>
+      <order id="1001" status="shipped">
+        <customer>
+          <name>Ada Lovelace</name>
+          <email>ada@example.com</email>
+          <address
+            street="12 Analytical Way"
+            city="London"
+            country="UK"
+          />
+        </customer>
+        <items>
+          <item sku="A-1" qty="2">
+            <description><![CDATA[ Gears <large> & small ]]></description>
+            <price currency="GBP">19.99</price>
+          </item>
+          <item sku="B-7" qty="1">
+            <description>Punch cards</description>
+            <price currency="GBP">4.50</price>
+          </item>
+        </items>
+        <total currency="GBP">44.48</total>
+      </order>
+      <order id="1002" status="pending">
+        <customer>
+          <name>Charles Babbage</name>
+          <email>charles@example.com</email>
+        </customer>
+        <items>
+          <item sku="C-3" qty="5">
+            <description>Brass cogs</description>
+            <price currency="GBP">2.00</price>
+          </item>
+        </items>
+        <total currency="GBP">10.00</total>
+        <!-- <note>commented-out tags should stay uncolored</note> -->
+      </order>
+    </orders>
+  </soap:Body>
+</soap:Envelope>
