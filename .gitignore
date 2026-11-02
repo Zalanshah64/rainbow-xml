@@ -2,3 +2,5 @@ node_modules/
 out/
 *.vsix
 samples/large.xml
+dist/
+.vscode-test-web/

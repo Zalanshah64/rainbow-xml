@@ -11,4 +11,5 @@ First release.
 - Marks unmatched tags with a wavy underline, hover message, and scrollbar mark.
 - HTML support: void elements, case-insensitive names, and skipped `<script>`/`<style>` contents.
 - Theme colors with light, dark, and high contrast variants, plus a custom palette and per-tag overrides.
-- **Rainbow XML: Toggle** command to turn coloring on or off for one file.
+- **Rainbow XML: Toggle** command to turn coloring on or off for one file, also in the editor's right-click menu.
+- Runs in the browser on vscode.dev and github.dev, and in Restricted Mode.

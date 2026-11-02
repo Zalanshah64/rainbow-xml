@@ -12,3 +12,5 @@ tsconfig.json
 .github/**
 images/*.svg
 images/screenshot.png
+CONTRIBUTING.md
+.vscode-test-web/**

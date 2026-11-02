@@ -25,6 +25,7 @@ export class RainbowController implements vscode.Disposable {
         this.decorator = new TagDecorator(this.config);
 
         this.disposables.push(
+            vscode.window.onDidChangeActiveTextEditor(() => this.updateToggleContext()),
             vscode.window.onDidChangeVisibleTextEditors(() => this.refreshNow()),
             vscode.window.onDidChangeTextEditorVisibleRanges(() => this.schedule()),
             vscode.window.onDidChangeTextEditorSelection(() => this.schedule(false)),
@@ -43,11 +44,14 @@ export class RainbowController implements vscode.Disposable {
                 if (e.affectsConfiguration(SECTION)) {
                     this.config = readConfig();
                     this.decorator.setConfig(this.config);
+                    this.updateLanguagesContext();
                     this.refreshNow();
                 }
             }),
         );
 
+        this.updateLanguagesContext();
+        this.updateToggleContext();
         this.refreshNow();
     }
 
@@ -59,6 +63,7 @@ export class RainbowController implements vscode.Disposable {
         }
         const on = !this.isEnabledFor(editor.document);
         this.fileToggles.set(editor.document.uri.toString(), on);
+        this.updateToggleContext();
         this.refreshNow();
         vscode.window.setStatusBarMessage(`Rainbow XML: ${on ? "on" : "off"} for this file`, 2000);
     }
@@ -67,6 +72,23 @@ export class RainbowController implements vscode.Disposable {
         clearTimeout(this.timer);
         this.disposables.forEach((d) => d.dispose());
         this.decorator.dispose();
+    }
+
+    // Context keys for the right-click menu, which shows in the configured
+    // languages and in any file the Toggle command has been used on.
+    private updateLanguagesContext(): void {
+        void vscode.commands.executeCommand("setContext", "rainbowXml.languages", [
+            ...this.config.languages,
+        ]);
+    }
+
+    private updateToggleContext(): void {
+        const doc = vscode.window.activeTextEditor?.document;
+        void vscode.commands.executeCommand(
+            "setContext",
+            "rainbowXml.fileToggled",
+            doc !== undefined && this.fileToggles.has(doc.uri.toString()),
+        );
     }
 
     private isEnabledFor(doc: vscode.TextDocument): boolean {
