@@ -9,3 +9,6 @@ scripts/**
 *.pdf
 tsconfig.json
 .gitignore
+.github/**
+images/*.svg
+images/screenshot.png

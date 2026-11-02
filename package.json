@@ -2,8 +2,18 @@
     "name": "rainbow-xml",
     "displayName": "Rainbow XML",
     "description": "Colors XML tags in rainbow order by nesting depth (or by tag name), highlights matching tags, and marks unmatched ones.",
-    "version": "0.0.1",
-    "publisher": "d214deb9-50a7-663a-a0b8-821bf74db6ea",
+    "version": "1.0.0",
+    "publisher": "ZalanShah",
+    "license": "MIT",
+    "icon": "images/icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Zalanshah64/rainbow-xml.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Zalanshah64/rainbow-xml/issues"
+    },
+    "homepage": "https://github.com/Zalanshah64/rainbow-xml#readme",
     "engines": {
         "vscode": "^1.90.0"
     },
@@ -245,6 +255,7 @@
     "devDependencies": {
         "@types/node": "^20.0.0",
         "@types/vscode": "~1.90.0",
+        "@vscode/vsce": "^4.1.0",
         "typescript": "^5.6.0"
     }
 }

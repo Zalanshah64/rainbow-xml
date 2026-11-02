@@ -1,0 +1,59 @@
+name: Publish Extension
+
+# Runs when a GitHub release is published. The release tag (for example
+# v1.2.3) sets the extension version, so package.json does not need bumping.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write # to attach the .vsix to the release
+  id-token: write # for Marketplace trusted publishing (no stored token needed)
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Set version from release tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION="${TAG#v}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - run: npm test
+
+      # A GitHub release marked "pre-release" becomes a Marketplace pre-release.
+      - name: Package
+        env:
+          PRE_RELEASE: ${{ github.event.release.prerelease && '--pre-release' || '' }}
+        run: npx vsce package $PRE_RELEASE --out "rainbow-xml-$VERSION.vsix"
+
+      # Authenticates through the Trusted Publishing policy on the Marketplace
+      # publisher page, which names this repository and this workflow file.
+      # Renaming this file breaks publishing until the policy is updated.
+      - name: Publish to VS Code Marketplace
+        run: npx vsce publish --oidc --skip-duplicate --packagePath "rainbow-xml-$VERSION.vsix"
+
+      # Optional: also publish to Open VSX (used by VSCodium, Cursor, etc.).
+      # Skipped unless an OVSX_PAT secret is set.
+      - name: Publish to Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        if: env.OVSX_PAT != ''
+        run: npx --yes ovsx@0 publish "rainbow-xml-$VERSION.vsix" --skip-duplicate
+
+      - name: Attach .vsix to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "rainbow-xml-$VERSION.vsix" --clobber

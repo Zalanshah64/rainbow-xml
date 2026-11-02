@@ -2,6 +2,8 @@
 
 A VS Code extension that colors XML tags by how deeply they are nested, the way rainbow brackets color nested parentheses. The root element is red, its children are orange, their children yellow, and so on through the rainbow, wrapping back to red after pink. Opening and closing tags share a color, and attribute names match their tag. No setup needed.
 
+![XML file with each nesting level in a different color](images/screenshot.png)
+
 It also:
 
 - **Colors by name instead, if you prefer.** With `"rainbowXml.colorBy": "name"`, every `<order>` is the same color in every file, whatever its depth.
@@ -58,6 +60,10 @@ The built-in palette is made of theme colors, with separate light, dark, and hig
 | `rainbowXml.unmatchedTag` | `editorWarning.foreground` | Underline and scrollbar mark for unmatched tags |
 
 Setting `rainbowXml.palette` replaces the ten theme colors with your own list.
+
+## Credits
+
+Inspired by [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv) by mechatroner, which colors each CSV column differently to make the columns easier to tell apart. Rainbow XML does the same for XML nesting.
 
 ## Development
 
