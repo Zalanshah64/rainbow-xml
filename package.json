@@ -1,0 +1,90 @@
+{
+    "name": "rainbow-xml",
+    "displayName": "Rainbow XML",
+    "description": "Gives every XML tag name its own consistent color, like Rainbow CSV does for columns.",
+    "version": "0.0.1",
+    "publisher": "d214deb9-50a7-663a-a0b8-821bf74db6ea",
+    "engines": {
+        "vscode": "^1.90.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Visualization"
+    ],
+    "keywords": [
+        "xml",
+        "rainbow",
+        "tags",
+        "highlight",
+        "color"
+    ],
+    "activationEvents": [
+        "onLanguage:xml",
+        "onStartupFinished"
+    ],
+    "main": "./out/src/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "rainbowXml.toggle",
+                "title": "Toggle",
+                "category": "Rainbow XML"
+            }
+        ],
+        "configuration": {
+            "title": "Rainbow XML",
+            "properties": {
+                "rainbowXml.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Turns tag coloring on or off."
+                },
+                "rainbowXml.palette": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "string",
+                        "pattern": "^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+                    },
+                    "markdownDescription": "A custom list of hex colors (for example `#ff6b6b`) to use instead of the built-in palette. Leave empty to use the built-in 10 colors, which have separate light and dark theme variants."
+                },
+                "rainbowXml.colorBrackets": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Also colors the `<`, `>`, and `/` around each tag."
+                },
+                "rainbowXml.overrides": {
+                    "type": "object",
+                    "default": {},
+                    "additionalProperties": {
+                        "type": "string",
+                        "pattern": "^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+                    },
+                    "markdownDescription": "Pins specific tag names to specific colors, for example `{ \"order\": \"#ff0000\" }`. Names are case-sensitive and include any namespace prefix."
+                },
+                "rainbowXml.languages": {
+                    "type": "array",
+                    "default": [
+                        "xml"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Language modes to color (for example xml, xaml, svg, xsl)."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p .",
+        "watch": "tsc -watch -p .",
+        "test": "npm run compile && node --test \"out/test/**/*.test.js\"",
+        "sample:large": "node scripts/generate-large.mjs"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "@types/vscode": "~1.90.0",
+        "typescript": "^5.6.0"
+    }
+}
