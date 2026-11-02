@@ -1,18 +1,33 @@
 import * as vscode from 'vscode';
 import { RainbowConfig } from './config';
-import { colorIndex } from './palette';
-import { scanLines, Span } from './scanner';
+import { Checkpoint, scanNested } from './nesting';
+import { Span } from './scanner';
 
 /** Extra lines scanned above and below the visible area so small scrolls look seamless. */
 const BUFFER_LINES = 100;
 
+/** How often to save the nesting state, so painting never has to scan from the top. */
+const CHECKPOINT_EVERY = 256;
+
+/** Saved nesting state for one document, valid for `version`. */
+interface DocNesting {
+  version: number;
+  /** Sorted by line; the first is always line 0 with nothing open. */
+  checkpoints: Checkpoint[];
+  /** False when lines after the last checkpoint still need scanning. */
+  complete: boolean;
+}
+
 /**
  * Owns the decoration types (one per palette color, plus one per override color)
- * and paints tag names in an editor's visible range.
+ * and paints tag names in an editor's visible range. A tag's color comes from
+ * its nesting depth: the root is the first palette color, its children the
+ * second, and so on, wrapping around.
  */
 export class TagDecorator implements vscode.Disposable {
   private paletteTypes: vscode.TextEditorDecorationType[] = [];
   private overrideTypes = new Map<string, vscode.TextEditorDecorationType>();
+  private readonly nesting = new Map<string, DocNesting>();
 
   constructor(private config: RainbowConfig) {
     this.createTypes();
@@ -32,16 +47,23 @@ export class TagDecorator implements vscode.Disposable {
     }
 
     const doc = editor.document;
+    const checkpoints = this.checkpointsFor(doc);
     for (const window of scanWindows(editor)) {
-      const lines: string[] = [];
-      for (let i = window.start; i <= window.end; i++) {
-        lines.push(doc.lineAt(i).text);
-      }
-      const toRange = (s: Span) => new vscode.Range(window.start + s.line, s.start, window.start + s.line, s.end);
+      // Start from the last checkpoint at or above the window so depths are known.
+      const from = lastAtOrBefore(checkpoints, window.start);
+      const toRange = (s: Span) => new vscode.Range(from.line + s.line, s.start, from.line + s.line, s.end);
 
-      for (const tag of scanLines(lines)) {
-        const ranges = groups.get(this.typeFor(tag.name))!;
+      for (const tag of scanNested(readLines(doc, from.line, window.end), from.stack).tags) {
+        if (from.line + tag.nameSpan.line < window.start) {
+          continue;
+        }
+        const ranges = groups.get(this.typeFor(tag.name, tag.depth))!;
         ranges.push(toRange(tag.nameSpan));
+        if (this.config.colorAttributes) {
+          for (const span of tag.attributeSpans) {
+            ranges.push(toRange(span));
+          }
+        }
         if (this.config.colorBrackets) {
           ranges.push(toRange(tag.openSpan));
           if (tag.closeSpan) {
@@ -63,16 +85,60 @@ export class TagDecorator implements vscode.Disposable {
     }
   }
 
+  /** Drops saved nesting state at and below the first edited line. */
+  documentChanged(e: vscode.TextDocumentChangeEvent): void {
+    const entry = this.nesting.get(e.document.uri.toString());
+    if (!entry || e.contentChanges.length === 0) {
+      return;
+    }
+    if (entry.version !== e.document.version - 1) {
+      this.nesting.delete(e.document.uri.toString()); // missed an edit; rescan from the top
+      return;
+    }
+    const firstLine = Math.min(...e.contentChanges.map((c) => c.range.start.line));
+    // A checkpoint only depends on the text above it. Line 0 is always valid.
+    entry.checkpoints = entry.checkpoints.filter((c) => c.line < Math.max(1, firstLine));
+    entry.complete = false;
+    entry.version = e.document.version;
+  }
+
+  documentClosed(doc: vscode.TextDocument): void {
+    this.nesting.delete(doc.uri.toString());
+  }
+
   dispose(): void {
     this.disposeTypes();
   }
 
-  private typeFor(name: string): vscode.TextEditorDecorationType {
+  /**
+   * Checkpoints covering the whole document. The first call scans everything;
+   * after an edit, only the lines from the edit down are scanned again.
+   */
+  private checkpointsFor(doc: vscode.TextDocument): Checkpoint[] {
+    const key = doc.uri.toString();
+    let entry = this.nesting.get(key);
+    if (!entry || entry.version !== doc.version) {
+      entry = { version: doc.version, checkpoints: [{ line: 0, stack: [] }], complete: false };
+      this.nesting.set(key, entry);
+    }
+    if (!entry.complete) {
+      const last = entry.checkpoints[entry.checkpoints.length - 1];
+      const lines = readLines(doc, last.line, doc.lineCount - 1);
+      const options = { safeLineEvery: CHECKPOINT_EVERY, attributes: false };
+      for (const c of scanNested(lines, last.stack, options).checkpoints) {
+        entry.checkpoints.push({ line: last.line + c.line, stack: c.stack });
+      }
+      entry.complete = true;
+    }
+    return entry.checkpoints;
+  }
+
+  private typeFor(name: string, depth: number): vscode.TextEditorDecorationType {
     const override = this.config.overrides.get(name);
     if (override !== undefined) {
       return this.overrideTypes.get(override)!;
     }
-    return this.paletteTypes[colorIndex(name, this.paletteTypes.length)];
+    return this.paletteTypes[depth % this.paletteTypes.length];
   }
 
   private createTypes(): void {
@@ -98,6 +164,29 @@ export class TagDecorator implements vscode.Disposable {
   private allTypes(): vscode.TextEditorDecorationType[] {
     return [...this.paletteTypes, ...this.overrideTypes.values()];
   }
+}
+
+function readLines(doc: vscode.TextDocument, start: number, end: number): string[] {
+  const lines: string[] = new Array(end - start + 1);
+  for (let i = start; i <= end; i++) {
+    lines[i - start] = doc.lineAt(i).text;
+  }
+  return lines;
+}
+
+/** The last checkpoint at or before `line` (checkpoints are sorted, and the first is line 0). */
+function lastAtOrBefore(checkpoints: readonly Checkpoint[], line: number): Checkpoint {
+  let lo = 0;
+  let hi = checkpoints.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (checkpoints[mid].line <= line) {
+      lo = mid;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  return checkpoints[lo];
 }
 
 interface LineWindow {

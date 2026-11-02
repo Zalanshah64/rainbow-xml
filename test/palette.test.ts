@@ -1,26 +1,6 @@
 import { test } from 'node:test';
 import * as assert from 'node:assert/strict';
-import { colorIndex, DEFAULT_PALETTE, hashName, isHexColor, resolveOverrides, resolvePalette } from '../src/palette';
-
-test('hash is deterministic', () => {
-  assert.equal(hashName('order'), hashName('order'));
-  assert.notEqual(hashName('order'), hashName('customer'));
-});
-
-test('color index stays inside the palette', () => {
-  for (const name of ['a', 'order', 'soap:Body', 'café', '']) {
-    const i = colorIndex(name, 10);
-    assert.ok(i >= 0 && i < 10, `${name} -> ${i}`);
-  }
-});
-
-test('similar names spread across the palette', () => {
-  const used = new Set<number>();
-  for (let i = 0; i < 50; i++) {
-    used.add(colorIndex(`item${i}`, 10));
-  }
-  assert.equal(used.size, 10);
-});
+import { DEFAULT_PALETTE, isHexColor, resolveOverrides, resolvePalette } from '../src/palette';
 
 test('default palette has 10 colors with valid light and dark variants', () => {
   assert.equal(DEFAULT_PALETTE.length, 10);

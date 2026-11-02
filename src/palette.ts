@@ -5,7 +5,8 @@ export interface ThemedColor {
   dark: string;
 }
 
-// Ten hues spread around the color wheel. Dark variants are bright enough for
+// Ten hues in rainbow order: the root element gets the first, its children the
+// second, and so on, wrapping back to red after pink. Dark variants are bright enough for
 // dark backgrounds; light variants are deeper so they stay readable on white.
 export const DEFAULT_PALETTE: readonly ThemedColor[] = [
   { dark: '#ff6b6b', light: '#c92a2a' }, // red
@@ -52,28 +53,4 @@ export function resolveOverrides(raw: unknown): Map<string, string> {
     }
   }
   return result;
-}
-
-/**
- * Stable 32-bit hash of a tag name (FNV-1a plus a final mix step so that
- * similar names like `item1` and `item2` spread across the palette).
- * Same input always gives the same output, across files and sessions.
- */
-export function hashName(name: string): number {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < name.length; i++) {
-    h ^= name.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  h ^= h >>> 16;
-  h = Math.imul(h, 0x85ebca6b);
-  h ^= h >>> 13;
-  h = Math.imul(h, 0xc2b2ae35);
-  h ^= h >>> 16;
-  return h >>> 0;
-}
-
-/** Index into a palette of the given size for this tag name. */
-export function colorIndex(name: string, paletteSize: number): number {
-  return hashName(name) % paletteSize;
 }

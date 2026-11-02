@@ -26,12 +26,16 @@ export class RainbowController implements vscode.Disposable {
       vscode.window.onDidChangeVisibleTextEditors(() => this.refreshNow()),
       vscode.window.onDidChangeTextEditorVisibleRanges(() => this.schedule()),
       vscode.workspace.onDidChangeTextDocument((e) => {
+        this.decorator.documentChanged(e);
         if (vscode.window.visibleTextEditors.some((ed) => ed.document === e.document)) {
           this.schedule();
         }
       }),
       vscode.workspace.onDidOpenTextDocument(() => this.schedule()), // language mode changes reopen the document
-      vscode.workspace.onDidCloseTextDocument((doc) => this.fileToggles.delete(doc.uri.toString())),
+      vscode.workspace.onDidCloseTextDocument((doc) => {
+        this.fileToggles.delete(doc.uri.toString());
+        this.decorator.documentClosed(doc);
+      }),
       vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration(SECTION)) {
           this.config = readConfig();

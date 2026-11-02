@@ -1,11 +1,48 @@
 import { test } from 'node:test';
 import * as assert from 'node:assert/strict';
-import { scanLines } from '../src/scanner';
+import { scan, scanLines } from '../src/scanner';
 
 const names = (lines: string[]) => scanLines(lines).map((t) => t.name);
 
 test('finds opening, closing, and self-closing tags', () => {
   assert.deepEqual(names(['<order id="1"><customer/></order>']), ['order', 'customer', 'order']);
+});
+
+test('reports whether each tag opens, closes, or self-closes', () => {
+  assert.deepEqual(
+    scanLines(['<a><b/><c x="/" /></a><d']).map((t) => t.kind),
+    ['open', 'selfClosing', 'selfClosing', 'close', 'open'],
+  );
+});
+
+test('reports safe lines outside comments and multi-line tags', () => {
+  const lines = ['<a>', '<!--', 'x', '-->', '<b', 'id="1">', '</b>', '</a>'];
+  const { safeLines } = scan(lines, { safeLineEvery: 1 });
+  assert.deepEqual(safeLines, [
+    { line: 1, tagsBefore: 1 },
+    { line: 4, tagsBefore: 1 },
+    { line: 6, tagsBefore: 2 },
+    { line: 7, tagsBefore: 3 },
+  ]);
+});
+
+test('reports at most one safe line per interval', () => {
+  const lines = Array.from({ length: 10 }, () => '<x/>');
+  assert.deepEqual(
+    scan(lines, { safeLineEvery: 4 }).safeLines.map((s) => s.line),
+    [4, 8],
+  );
+});
+
+test('reports attribute names but not words inside values', () => {
+  const [tag] = scanLines([`<order id="1" xmlns:ns='a b' note="x=y"`, '  status = "ok"/>']);
+  assert.deepEqual(tag.attributeSpans, [
+    { line: 0, start: 7, end: 9 },
+    { line: 0, start: 14, end: 22 },
+    { line: 0, start: 29, end: 33 },
+    { line: 1, start: 2, end: 8 },
+  ]);
+  assert.deepEqual(scanLines(['<a></a>'])[0].attributeSpans, []);
 });
 
 test('reports name, open, and close spans', () => {

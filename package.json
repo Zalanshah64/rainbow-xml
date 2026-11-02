@@ -1,7 +1,7 @@
 {
     "name": "rainbow-xml",
     "displayName": "Rainbow XML",
-    "description": "Gives every XML tag name its own consistent color, like Rainbow CSV does for columns.",
+    "description": "Colors XML tags in rainbow order by nesting depth, so each child is the next color after its parent.",
     "version": "0.0.1",
     "publisher": "d214deb9-50a7-663a-a0b8-821bf74db6ea",
     "engines": {
@@ -46,12 +46,17 @@
                         "type": "string",
                         "pattern": "^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
                     },
-                    "markdownDescription": "A custom list of hex colors (for example `#ff6b6b`) to use instead of the built-in palette. Leave empty to use the built-in 10 colors, which have separate light and dark theme variants."
+                    "markdownDescription": "A custom list of hex colors (for example `#ff6b6b`) to use instead of the built-in palette. The root element uses the first color, its children the second, and so on. Leave empty to use the built-in 10 colors, which have separate light and dark theme variants."
                 },
                 "rainbowXml.colorBrackets": {
                     "type": "boolean",
                     "default": false,
                     "markdownDescription": "Also colors the `<`, `>`, and `/` around each tag."
+                },
+                "rainbowXml.colorAttributes": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Also colors attribute names (like `id` in `<order id=\"1\">`) to match their tag. Attribute values keep their normal color."
                 },
                 "rainbowXml.overrides": {
                     "type": "object",
